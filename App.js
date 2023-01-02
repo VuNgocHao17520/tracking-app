@@ -19,18 +19,18 @@ export default function App() {
     if (faces.length === 0) {
       setFace([]);
     }else {
-      // Lưu full thông tin face lại 
+      // *****Detect face from cammera 
       setFace(faces)
       var info_moi = {}
       for (let i=0; i<face.length; i++) {
-        // cập nhật thông tin cho face mới chưa đủ 
+        // *****Init face info variable if not exist
         Object.assign(info_moi,{[face[i].faceID]:face[i].faceID})
       }
 
       let keycu = Object.keys(info_cu)
       let valuecu = Object.values(info_cu)
       let keymoi= Object.keys(info_moi)
-      // face mới xuất hiện 
+      // *****get list of face need to identity 
       let unregisteredkey = []
       for (let i =0; i<keymoi.length; i++){
         let existed = false
@@ -49,14 +49,13 @@ export default function App() {
         unregisteredkey.push(keymoi[i]) 
         }
       }
-      // chụp lại face hiện tại
+      // *****if any ?
       if (unregisteredkey.length>0){
         let originUri = await takePicture( this );
-        // lấy face chưa hoàn thiện
         if (originUri!="not capture"){
           for (let i=0;i<keymoi.length;i++) {
             if (Object.values(info_moi)[i]==keymoi[i]){
-              // cắt face
+              // *****resize, redefine coodinates, crop face
               let croppedUri = await cropFace(
                 originUri,
                 Math.floor(face[i].bounds.origin.y),
@@ -64,7 +63,7 @@ export default function App() {
                 Math.floor(face[i].bounds.size.height),
                 Math.floor(face[i].bounds.size.width)
               )
-              // mang đi định danh 
+              // *****call backend api to identity face 
               if (croppedUri!=false){
                 let res = await getIndentity(croppedUri)
                 if (res.code==200){
@@ -74,7 +73,7 @@ export default function App() {
                   })
                 }
               }
-              // cập nhật lại thông tin chưa hoàn thiện
+              // *****update face variavles
             }
           }
           setIsProcess(false)
