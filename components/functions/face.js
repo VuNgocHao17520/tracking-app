@@ -21,7 +21,7 @@ export async function takePicture ( page_data ) {
 
 export async function cropFace( faceUri, top, left, height, width ) {
   var uri = false
-  // reverse dimension
+  // Điều chỉnh lại thông số toạ độ khuôn mặt
   left = Dimensions.get('window').width-left-width
   if ((left+width)>Dimensions.get('window').width){
     width=Dimensions.get('window').width-left
@@ -32,12 +32,14 @@ export async function cropFace( faceUri, top, left, height, width ) {
       faceUri,
       [
         {
+          // Resize ảnh về đúng kích thước của màn hình điện thoại
           resize: {
             height: Dimensions.get('window').height,
             width: Dimensions.get('window').width
           }
         },
         {
+          // cắt ảnh chứ khuôn mặt.
           crop: {
             height: height, 
             originX: left, 
@@ -46,6 +48,7 @@ export async function cropFace( faceUri, top, left, height, width ) {
           }
         }
       ],
+      // nén và định dạng ảnh lại
       { compress: 0.2, format: SaveFormat.PNG, base64: true}
     )
     uri = manipResult.uri
